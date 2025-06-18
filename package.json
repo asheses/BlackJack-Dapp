@@ -5,8 +5,11 @@
     "node": ">=18.0.0"
   },
   "scripts": {
+    "postbuild": "next-export-optimize-images --images ./public --out ./out",
+    "serve": "serve -p 8080 ./out",
+    "preview": "npm run serve",
     "dev": "next dev",
-    "export": "next build && next export",
+    "export": "node ./scripts/make-spa.js",
     "build": "next build",
     "start": "next start",
     "format": "npx prettier --write \"{__tests__,components,pages,styles}/**/*.{ts,tsx,js,jsx}\"",
@@ -19,9 +22,10 @@
     "@privy-io/server-auth": "^1.18.4",
     "@tailwindcss/forms": "^0.5.3",
     "antd": "^5.26.0",
-    "next": "latest",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "next": "^15.3.3",
+    "qrcode.react": "^4.2.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "viem": "^2.31.0"
   },
   "devDependencies": {
