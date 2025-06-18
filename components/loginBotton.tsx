@@ -1,6 +1,6 @@
 'use client';
 
-import { useLogin, usePrivy } from "@privy-io/react-auth";
+import { useLogin, usePrivy,WalletWithMetadata } from "@privy-io/react-auth";
 import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
 import { CopyOutlined } from '@ant-design/icons';
@@ -8,7 +8,9 @@ import { CopyOutlined } from '@ant-design/icons';
 export default function LoginButton() {
   const { login } = useLogin({});
   const { user, logout, exportWallet } = usePrivy();
-  const address = user?.linkedAccounts[1]?.address || '';
+  const  address = user?.linkedAccounts
+  .filter((account): account is WalletWithMetadata => account.type === 'wallet')
+  .map(wallet => wallet.address)[1] || '';
 
   const copyAddress = async () => {
     try {

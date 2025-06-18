@@ -1,4 +1,4 @@
-import { useSendTransaction, usePrivy, useWallets } from '@privy-io/react-auth';
+import { useSendTransaction, usePrivy, useWallets, WalletWithMetadata } from '@privy-io/react-auth';
 import { useState, useEffect } from 'react';
 import gameABI from "../config/BlackJack.json";
 import { encodeFunctionData, createPublicClient, http, formatEther } from 'viem';
@@ -48,8 +48,10 @@ export default function SendTransactionPage() {
   const { sendTransaction } = useSendTransaction();
   // 检查用户是否已登录
   const { authenticated, user, ready } = usePrivy();
-  const [txHash, setTxHash] = useState<string | null>(null);
-  const userAddress = user?.linkedAccounts[1]?.address || '';
+  const [txHash, setTxHash] = useState<string>("...");
+  const userAddress = user?.linkedAccounts
+    .filter((account): account is WalletWithMetadata => account.type === 'wallet')
+    .map(wallet => wallet.address)[1] || '';
   const gameAddress = '0xec2A2F1AD0c78097d71E8a28357523485C74e071';
   const [amount, setAmount] = useState('0.1');
   const uiOptions = { showWalletUIs: false };
@@ -233,7 +235,7 @@ export default function SendTransactionPage() {
         const address = userAddress;
 
         // 查询余额（返回 bigint 类型的 wei）
-        const balanceWei = await publicClient.getBalance({ address });
+        const balanceWei = await publicClient.getBalance({ address: address as `0x${string}` });
 
         // 转换为 ETH
         const balanceEth = formatEther(balanceWei);
@@ -309,7 +311,7 @@ export default function SendTransactionPage() {
           <button
             onClick={() => handleSend("hit")}
             className=" bg-blue-500 text-amber-100 py-2 px-4 rounded hover:bg-blue-600 disabled:bg-gray-400"
-            disabled={(!gameData?.isGameStart) ||(txHash == "loading...")}
+            disabled={(!gameData?.isGameStart) || (txHash == "loading...")}
           >
             要牌
           </button>

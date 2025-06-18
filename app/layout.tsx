@@ -3,10 +3,8 @@ import PrivyProvider from "../components/privy-provider";
 import { Metadata } from "next";
 import localFont from 'next/font/local'
 import Head from 'next/head';
-import { PrivyClient } from "@privy-io/server-auth";
-import { cookies } from "next/headers";
-import Login from "../components/login";
 
+import Login from "../components/login";
 export const metadata: Metadata = {
   title: "Black Jack",
   description: "Black Jack",
@@ -38,22 +36,7 @@ const adelleSans = localFont({
 })
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const cookieStore = await cookies()
-  const cookieAuthToken = cookieStore.get("privy-token")?.value;
-
-  if (cookieAuthToken) {
-    const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
-    const PRIVY_APP_SECRET = process.env.PRIVY_APP_SECRET;
-    const client = new PrivyClient(PRIVY_APP_ID!, PRIVY_APP_SECRET!);
-
-    try {
-      const claims = await client.verifyAuthToken(cookieAuthToken);
-      console.log({ claims });
-
-    } catch (error) {
-      console.error(error);
-    }
-  }
+  
   return (
     <html lang="en" className={`${adelleSans.className}`}>
       <Head>
